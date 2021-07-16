@@ -65,6 +65,11 @@ class SliderEntityRow extends LitElement {
       this.hide_slider = !!localStorage.getItem('cover.window_' + id);
     }
 
+    // All shutters (group)
+    if (this._config.entity.startsWith('cover.roof_shutters')) {
+      this.hide_slider = this.checkIfLocalStorageKeyStartsWith('cover.window_');
+    }
+
     const showSlider =
       c.stateObj.state !== "unavailable" &&
       c.hasSlider &&
@@ -123,6 +128,14 @@ class SliderEntityRow extends LitElement {
         ${content}
       </hui-generic-entity-row>
     `;
+  }
+
+  checkIfLocalStorageKeyStartsWith(search) {
+    const values = Object.keys(localStorage)
+        .filter((key) => key.startsWith(search) )
+        .map((key) => localStorage[key] );
+
+    return !!values.length;
   }
 
   static get styles() {
