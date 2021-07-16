@@ -7,6 +7,7 @@ import pjson from "../package.json";
 class SliderEntityRow extends LitElement {
   _config: ControllerConfig;
   ctrl: Controller;
+  hide_slider;
 
   @property() hass: any;
   @property() hide_state: boolean;
@@ -53,10 +54,22 @@ class SliderEntityRow extends LitElement {
       ? "rtl"
       : "ltr";
 
+    if (this._config.entity.startsWith('cover.window_') && c.stateObj.state === 'open') {
+      localStorage.setItem(this._config.entity, c.stateObj.state);
+    } else {
+      localStorage.removeItem(this._config.entity);
+    }
+
+    if (this._config.entity.startsWith('cover.shutter_')) {
+      const id = this._config.entity.split('_').pop();
+      this.hide_slider = !!localStorage.getItem('cover.window_' + id);
+    }
+
     const showSlider =
       c.stateObj.state !== "unavailable" &&
       c.hasSlider &&
-      !(c.isOff && this._config.hide_when_off);
+      !(c.isOff && this._config.hide_when_off)
+      && !this.hide_slider;
     const showToggle = this._config.toggle && c.hasToggle;
     const showValue = showToggle
       ? false
